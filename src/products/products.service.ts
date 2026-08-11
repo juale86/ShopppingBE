@@ -34,11 +34,15 @@ export class ProductsService {
   }
 
   async findOne(searchTerm: string) {
-    let product: Product;
+    let product: Product | null;
     if(isUUID(searchTerm)) {
       product = await this.productRepository.findOneBy({ id: searchTerm })
     } else {
-      product = await this.productRepository.findOneBy({ slug: searchTerm})
+      const queryBuilder = this.productRepository.createQueryBuilder();
+      product = await queryBuilder.where(`title =:title or slug =:slug`, {
+        title: searchTerm,
+        slug: searchTerm
+      }).getOne();
     }
     // const product  = await this.productRepository.findOneBy({ slug: searchTerm });
     if(!product) {
@@ -48,7 +52,19 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+    const product = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto
+    })
+    if(!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+    try {
+      await this.productRepository.save(product)
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+    return product
   }
 
   async remove(id: string) {
@@ -60,7 +76,6 @@ export class ProductsService {
   }
 
   private handleDBExceptions(error: any) {
-      // console.log(error);
       if(error.code === '23505') {
         throw new BadRequestException(error.detail)
       }
