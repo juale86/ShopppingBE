@@ -1,9 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Product {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
     @Column('text', {
         unique: true,
@@ -51,4 +51,12 @@ export class Product {
     //     default: [],
     // })
     // images: string[];
+
+    @BeforeInsert()
+    checkSlugInsert() {
+        if(!this.slug) {
+            this.slug = this.title.toLowerCase().replaceAll(' ', '_').replaceAll("'", '');
+        }
+        this.slug = this.slug.toLowerCase().replaceAll(' ', '_').replaceAll("'", '');
+    }
 }
