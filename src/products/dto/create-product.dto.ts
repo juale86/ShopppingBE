@@ -3,7 +3,7 @@ import { IsString, IsArray, IsIn, IsInt, IsNumber, IsOptional, IsPositive, MinLe
 export class CreateProductDto {
     @IsString()
     @MinLength(1)
-    title: string;
+    title!: string;
 
     @IsNumber()
     @IsPositive()
@@ -30,4 +30,13 @@ export class CreateProductDto {
     @IsIn(['men', 'women', 'kid', 'unisex'])
     gender?: string;
     
+    @IsString({ each: true })
+    @IsArray()
+    @IsOptional()
+    tags?: string[];
+
+    @IsString({ each: true })
+    @IsArray()
+    @IsOptional()
+    images?: string[];
 }

@@ -6,7 +6,6 @@ import { PaginationDto } from './dto/paginationDto';
 
 @Controller('products')
 export class ProductsController {
-  productRepository: any;
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
@@ -16,7 +15,6 @@ export class ProductsController {
 
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
-    console.log('paginationDto', paginationDto);
     return this.productsService.findAll(paginationDto);
   }
 
