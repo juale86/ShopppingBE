@@ -47,12 +47,6 @@ export class Product {
     })
     tags: string[];
 
-    // @Column('text', {
-    //     array: true,
-    //     default: [],
-    // })
-    // images: string[];
-
     @BeforeInsert()
     checkSlugInsert() {
         if(!this.slug) {
@@ -64,7 +58,7 @@ export class Product {
     @OneToMany(
         () => ProductImage,
         productImage => productImage.product,
-        {cascade: true}
-)
+        {cascade: true, eager: true}
+    )
     images?: ProductImage[];
 }
