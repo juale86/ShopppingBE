@@ -66,7 +66,8 @@ export class ProductsService {
     if(!product) {
       throw new NotFoundException(`Product with ${searchTerm} not found`);
     }
-    return product;
+    const { images, ...rest } = product;
+    return {...rest, images: product.images?.map(img => img.url) || []};
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
@@ -86,25 +87,24 @@ export class ProductsService {
         await queryRunner.manager.delete(ProductImage, { product: { id } }); // Sin condición de borrado, borra todas las imágenes del producto
         product.images = images.map(image => this.productImageRepository.create({ url: image }));
       } else {
-        
+        product.images = await this.productImageRepository.findBy({ product: { id } });
       }
       await queryRunner.manager.save(product)
       await queryRunner.commitTransaction();
-      await queryRunner.release();
       const { images: productImages, ...rest } = product;
       return {rest, images: productImages?.map(img => img.url) || []};
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      await queryRunner.release();
-
       this.handleDBExceptions(error);
+    } finally {
+      await queryRunner.release();
     }
     
     return product;
   }
 
   async remove(id: string) {
-    const product = await this.findOne( id );
+    const product = await this.productRepository.findOneBy({ id });
     if(!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
@@ -125,6 +125,15 @@ export class ProductsService {
       }
       this.logger.error(error);
       throw new InternalServerErrorException('Server id down, check server logs');
+  }
+  
+  async deleteAllProducts() { // Se espera su uso solo en un entorno de desarrollo, no en producción.
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+    try {
+      return await queryBuilder.delete().from(Product).execute();
+    } catch(error) {
+      this.handleDBExceptions(error);
+    }
   }
   
 }

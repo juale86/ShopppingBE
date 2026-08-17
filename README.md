@@ -10,3 +10,4 @@
 3. Crear y pedir variables de .env
 4. Levantar DB
 5. ```yarn start:dev```
+6. Ejecutar: ``` .../api/seed ```
