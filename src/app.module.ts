@@ -6,6 +6,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ProductsModule } from './products/products.module';
 import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -23,12 +24,14 @@ import { FilesModule } from './files/files.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..', 'public')
-    }),
     ProductsModule,
     SeedModule,
-    FilesModule
+    FilesModule,
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname,'..', 'public'),
+      serveRoot:'/public/',
+    }),
   ],
 })
 export class AppModule {}
