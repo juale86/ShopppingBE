@@ -1,48 +1,59 @@
 import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 import { LoginUserDto, CreateUserDto } from './dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private readonly userRespository: Repository<User>
+    @InjectRepository(User) private readonly userRespository: Repository<User>,
+    private readonly jwtService: JwtService,
   ){}
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
+      const { password: dtoPassword, ...userWithoutPassword } = createUserDto;
       
       const user = this.userRespository.create({
-        ...userData,
-        password: bcrypt.hashSync(password, 10)
+        ...userWithoutPassword,
+        password: bcrypt.hashSync(dtoPassword, 10)
       })
       await this.userRespository.save(user)
-      delete user.password;
-      return user;
-      // ToDo: Retornar el JWT de acceso
+      const { password, ...userData } = user;
+      return userData;
+      // ToDo: Retornar el JWT de acceso?
     } catch (error) {
       this.handleDBErrors(error)
     }
   }
   
-  async login (loginUserDto: LoginUserDto) {
-    const { password, email } = loginUserDto;
+  async login(loginUserDto: LoginUserDto) {
+    const { password: dtoPassword, email } = loginUserDto;
     const user = await this.userRespository.findOne({
       where: { email },
-      select: { email: true, password: true}
+      select: { email: true, password: true, fullName: true, isActive: true, roles: true, id: true }
     })
 
     if(!user) {
-      throw new UnauthorizedException('Credenciales no válidas')
+      throw new UnauthorizedException('Credenciales no válidas, usuario')
     }
 
-    if( bcrypt.compareSync(password, user.password)) {
-      throw new UnauthorizedException('Credenciales no válidas')
+    if( !bcrypt.compareSync(dtoPassword, user.password)) {
+      throw new UnauthorizedException('Credenciales no válidas, password')
     }
-    return user;
-    // ToDo: Retornar el JWT de acceso.
+    const { password, ...userData} = user
+    return {
+      ...userData,
+      token: this.getJwt({id: user.id})
+    };
+  }
+
+  private getJwt( payload: JwtPayload){
+    const token = this.jwtService.sign(payload)
+    return token;
   }
   
   private handleDBErrors(error: any): never {
