@@ -13,6 +13,7 @@ export class AuthService {
     @InjectRepository(User) private readonly userRespository: Repository<User>,
     private readonly jwtService: JwtService,
   ){}
+
   async create(createUserDto: CreateUserDto) {
     try {
       const { password: dtoPassword, ...userWithoutPassword } = createUserDto;
@@ -29,7 +30,7 @@ export class AuthService {
       this.handleDBErrors(error)
     }
   }
-  
+
   async login(loginUserDto: LoginUserDto) {
     const { password: dtoPassword, email } = loginUserDto;
     const user = await this.userRespository.findOne({
@@ -55,7 +56,7 @@ export class AuthService {
     const token = this.jwtService.sign(payload)
     return token;
   }
-  
+
   private handleDBErrors(error: any): never {
     if(error.code === '23505')
       throw new BadRequestException(error.detail)
