@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto/';
 import { User } from './entities/user.entity';
 import { GetUser, Auth } from './decorators/';
+import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,14 @@ export class AuthController {
     return this.authService.login(loginUserDto)
   }
 
+  @Get('check-status')
+  @Auth(ValidRoles.user)
+  checkAuthStatus(
+    @GetUser() user: User
+  ){
+    return this.authService.checkAuthStatus(user);
+  }
+  
   @Get('privateRoute')
   @Auth()
   testingPrivateRoute(

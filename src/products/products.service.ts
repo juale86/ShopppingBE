@@ -26,7 +26,8 @@ export class ProductsService {
       const { images = [], ...productDetails } = createProductDto;
       const product = this.productRepository.create({
         ...productDetails,
-        images: images.map( image => this.productImageRepository.create({ url: image }) )
+        images: images.map( image => this.productImageRepository.create({ url: image }) ),
+        user
       })
       await this.productRepository.save(product);
       return {...product, images: images};
@@ -71,7 +72,7 @@ export class ProductsService {
     return {...rest, images: product.images?.map(img => img.url) || []};
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdate } = updateProductDto;
     
     // Preload busca en la DB y combina en un solo objeto los datos de la DB y los datos que se quieren actualizar
@@ -90,6 +91,7 @@ export class ProductsService {
       } else {
         product.images = await this.productImageRepository.findBy({ product: { id } });
       }
+      product.user = user;
       await queryRunner.manager.save(product)
       await queryRunner.commitTransaction();
       const { images: productImages, ...rest } = product;

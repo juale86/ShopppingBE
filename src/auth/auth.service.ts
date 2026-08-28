@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { LoginUserDto, CreateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { Auth } from './decorators';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +52,17 @@ export class AuthService {
       token: this.getJwt({id: user.id})
     };
   }
-
+  
+  @Auth()
+  async checkAuthStatus(
+    user: User
+  ){
+    return {
+      ...user,
+      token: this.getJwt({id: user.id})
+    };
+  }
+  
   private getJwt( payload: JwtPayload){
     const token = this.jwtService.sign(payload)
     return token;
