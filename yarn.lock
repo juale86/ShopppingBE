@@ -1096,7 +1096,7 @@
     load-esm "1.0.3"
     tslib "2.8.1"
 
-"@nestjs/config@^5.0.0":
+"@nestjs/config@^12.0.0":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-12.0.0.tgz#de57870d17d54ac9408c5b07e57c2b52cfbee462"
   integrity sha512-pG5+fFfCo3cdgVkLJLvvhUGfxEjwzv9hIAQ1aJVHvHlHVniDWfwX5pR/utgoAkJzSikv2oTR1BmIF03FXdi42Q==
@@ -1165,7 +1165,7 @@
     jsonc-parser "3.3.1"
     pluralize "8.0.0"
 
-"@nestjs/serve-static@^6.0.0":
+"@nestjs/serve-static@^12.0.0":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@nestjs/serve-static/-/serve-static-12.0.0.tgz#fa2056e76358d5cc47a39a1c0938cf0de341857d"
   integrity sha512-3YsDpylQN90o5r7rIN2M5LQ3uK8WUJ8oSo0wH0SRrBb7X/FKD31vNY4J7cOlbRDZiX1kxDWyI8wSlygqj/57Yg==
