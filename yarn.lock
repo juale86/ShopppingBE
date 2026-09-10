@@ -1110,7 +1110,7 @@
     socket.io "4.8.3"
     tslib "2.8.1"
 
-"@nestjs/schematics@^12.0.0", "@nestjs/schematics@^12.0.1":
+"@nestjs/schematics@^12.0.0":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@nestjs/schematics/-/schematics-12.0.0.tgz#e42f0892a15a0fc3b39c308f5f429eec0c82e01a"
   integrity sha512-ilsxam7i+SWd2psr12faLVSk86FYKnxRUGO6jAGNi1P9+O0kRaYVOScyrKeIj97W9T9UJoJF38fg+7KgjY/nOg==
@@ -4846,7 +4846,7 @@ pg-types@2.2.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.22.0:
+pg@^8.16.3:
   version "8.23.0"
   resolved "https://registry.yarnpkg.com/pg/-/pg-8.23.0.tgz#5c2026d32bd0cb4fbd9196bac1ecf5ae66607180"
   integrity sha512-Ip2EQCngowJLGOfCwkFhPXU7/ljlhn6Rxlmy4XYfL2Y+vyRM59+8uR2xqRWKdYmbXmxCFOAmKxBuSUCdF34qLg==

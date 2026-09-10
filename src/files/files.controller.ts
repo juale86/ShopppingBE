@@ -18,7 +18,7 @@ export class FilesController {
     fileFilter,
     storage: diskStorage({
       filename: fileNamer,
-      destination: './static/uploads'
+      destination: './static/products'
     }),
   }))
   uploadProductImage(@UploadedFile() file: Express.Multer.File){
