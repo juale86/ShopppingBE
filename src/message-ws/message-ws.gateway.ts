@@ -16,7 +16,7 @@ export class MessageWsGateway
   @WebSocketServer() wss: Server;
 
   constructor(private readonly messageWsService: MessageWsService) {}
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket) {
     this.messageWsService.registerClient(client);
     this.wss.emit(
       'clients-updated',

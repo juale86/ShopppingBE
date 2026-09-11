@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   @Auth()
-  async checkAuthStatus(user: User) {
+  checkAuthStatus(user: User) {
     return {
       ...user,
       token: this.getJwt({ id: user.id }),
@@ -78,8 +78,9 @@ export class AuthService {
     return token;
   }
 
-  private handleDBErrors(error: any): never {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
+  private handleDBErrors(error: unknown): never {
+    const dbError = error as { code?: string; detail?: string };
+    if (dbError.code === '23505') throw new BadRequestException(dbError.detail);
     throw new InternalServerErrorException('Please check server logs...');
   }
 }

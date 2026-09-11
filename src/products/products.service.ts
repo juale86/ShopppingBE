@@ -138,9 +138,8 @@ export class ProductsService {
   }
 
   private handleDBExceptions(error: any) {
-    if (error.code === '23505') {
-      throw new BadRequestException(error.detail);
-    }
+    const dbError = error as { code?: string; detail?: string };
+    if (dbError.code === '23505') throw new BadRequestException(dbError.detail);
     this.logger.error(error);
     throw new InternalServerErrorException('Server id down, check server logs');
   }

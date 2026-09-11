@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, type Multer } from 'multer';
+import { diskStorage } from 'multer';
 import { fileFilter, fileNamer } from './helpers/';
 import type { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
