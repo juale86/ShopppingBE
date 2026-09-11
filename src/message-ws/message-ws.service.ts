@@ -2,22 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
 interface ConnectedClients {
-    [id: string]: Socket
+  [id: string]: Socket;
 }
 
 @Injectable()
 export class MessageWsService {
-    private connectedClients: ConnectedClients = {}
+  private connectedClients: ConnectedClients = {};
 
-    registerClient( client: Socket ) {
-        this.connectedClients[client.id] = client
-    }
+  registerClient(client: Socket) {
+    this.connectedClients[client.id] = client;
+  }
 
-    removeClient( clientId: string ) {
-        delete this.connectedClients[ clientId ]
-    }
-    getConnectedClients(): string[] {
-        const connectedClients = Object.keys(this.connectedClients);
-        return connectedClients;
-    }
+  removeClient(clientId: string) {
+    delete this.connectedClients[clientId];
+  }
+  getConnectedClients(): string[] {
+    const connectedClients = Object.keys(this.connectedClients);
+    return connectedClients;
+  }
 }

@@ -1,18 +1,22 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
-import { Product } from "./product.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from 'typeorm';
+import { Product } from './product.entity';
 
-@Entity({name: 'products_images'})
+@Entity({ name: 'products_images' })
 export class ProductImage {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column('text')
-    url: string;
+  @Column('text')
+  url: string;
 
-    @ManyToOne(
-        () => Product,
-        (product) => product.images,
-        { onDelete: 'CASCADE'}
-    )
-    product: Relation<Product>;
+  @ManyToOne(() => Product, (product) => product.images, {
+    onDelete: 'CASCADE',
+  })
+  product: Relation<Product>;
 }

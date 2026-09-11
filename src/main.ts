@@ -17,8 +17,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  
+
   await app.listen(currentPort ?? 3000);
-  logger.log(`App runnin on port ${currentPort}`)
+  logger.log(`App runnin on port ${currentPort}`);
 }
 bootstrap();

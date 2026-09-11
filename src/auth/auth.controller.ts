@@ -13,29 +13,25 @@ export class AuthController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.authService.create(createUserDto);
   }
-  
+
   @Post('login')
-  loginUser(@Body() loginUserDto: LoginUserDto){
-    return this.authService.login(loginUserDto)
+  loginUser(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
   }
 
   @Get('check-status')
   @Auth(ValidRoles.user)
-  checkAuthStatus(
-    @GetUser() user: User
-  ){
+  checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
   }
-  
+
   @Get('privateRoute')
   @Auth()
-  testingPrivateRoute(
-    @GetUser() user: User,
-  ) {
+  testingPrivateRoute(@GetUser() user: User) {
     return {
       ok: true,
-      message: "Hola Bruno",
+      message: 'Hola Bruno',
       user: user,
-    }
+    };
   }
 }
