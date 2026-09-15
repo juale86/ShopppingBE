@@ -26,4 +26,5 @@ jobs:
     - run: yarn lint
       continue-on-error: true
     - run: yarn test
+    - run: yarn test:cov
     - run: yarn build
