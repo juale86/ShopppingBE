@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  NotFoundException,
   Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';

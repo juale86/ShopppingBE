@@ -8,6 +8,7 @@ import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
 import { MessageWsModule } from './message-ws/message-ws.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -37,5 +38,6 @@ import { MessageWsModule } from './message-ws/message-ws.module';
     }),
     MessageWsModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
