@@ -5,48 +5,61 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { ValidRoles } from '../auth/interfaces/roles.interface';
 
 @Injectable()
 export class SeedService {
   constructor(
     private readonly productService: ProductsService,
-    @InjectRepository(User) private readonly userRespository: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   async runSeed() {
-    await this.deleteDables();
-    const adminUser = await this.insertUsers();
+    await this.deleteTables();
+    const superUser = await this.insertUsers();
 
-    await this.insertNewProducts(adminUser);
+    await this.insertNewProducts(superUser as User);
     return 'This action runs the seed';
   }
 
   private async insertUsers() {
     const seedUsers = initialData.users;
     const users: User[] = [];
+
     seedUsers.forEach((user) => {
-      let { password: seedPassword, ...userData } = user;
-      seedPassword = bcrypt.hashSync(seedPassword, 10);
+      const { password: seedPassword, ...userData } = user;
       users.push(
-        this.userRespository.create({ ...user, password: seedPassword }),
+        this.userRepository.create({
+          ...userData,
+          password: bcrypt.hashSync(seedPassword, 10),
+        }),
       );
     });
-    const dbUsers = await this.userRespository.save(seedUsers);
-    return dbUsers[0];
+
+    users.push(
+      this.userRepository.create({
+        email: 'superuser@teslo.com',
+        fullName: 'Super User',
+        password: bcrypt.hashSync('SuperUser123', 10),
+        roles: [ValidRoles.superUser, ValidRoles.admin],
+      }),
+    );
+
+    const dbUsers = await this.userRepository.save(users);
+
+    return dbUsers.find((u) => u.roles.includes(ValidRoles.superUser));
   }
 
-  private async deleteDables() {
+  private async deleteTables() {
     await this.productService.deleteAllProducts();
-    const queryBuilder = this.userRespository.createQueryBuilder();
+    const queryBuilder = this.userRepository.createQueryBuilder();
     await queryBuilder.delete().from(User).execute();
   }
 
   private async insertNewProducts(user: User) {
-    await this.productService.deleteAllProducts();
-
     const products = initialData.products;
     const insertPromises = [];
-    products.map((product) =>
+    products.forEach((product) =>
       insertPromises.push(this.productService.create(product, user) as never),
     );
     await Promise.all(insertPromises);

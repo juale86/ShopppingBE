@@ -26,10 +26,10 @@ export class User {
   @Column('text')
   fullName: string;
 
-  @Column('bool', {
+  @Column('boolean', {
     default: true,
   })
-  isActive: string;
+  isActive: boolean;
 
   @Column('text', {
     array: true,

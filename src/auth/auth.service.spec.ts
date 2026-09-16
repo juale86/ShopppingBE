@@ -15,9 +15,9 @@ jest.mock('bcrypt');
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: {
-    create: jest.Mock;
-    save: jest.Mock;
-    findOne: jest.Mock;
+    create: jest.Mock<(...args: any[]) => any>;
+    save: jest.Mock<(...args: any[]) => any>;
+    findOne: jest.Mock<(...args: any[]) => any>;
   };
   let jwtService: Pick<JwtService, 'sign'>;
 
@@ -27,7 +27,9 @@ describe('AuthService', () => {
       save: jest.fn(),
       findOne: jest.fn(),
     };
-    jwtService = { sign: jest.fn().mockReturnValue('jwt-token') };
+    jwtService = {
+      sign: jest.fn<(...args: any[]) => string>().mockReturnValue('jwt-token'),
+    };
     service = new AuthService(
       userRepository as unknown as Repository<User>,
       jwtService as JwtService,

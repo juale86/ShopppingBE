@@ -13,17 +13,17 @@ import { ApiProperty } from '@nestjs/swagger';
 @Entity({ name: 'products' })
 export class Product {
   @ApiProperty({
-      example: 'sadfasdfdsdfasfd',
-      description: 'ProductID',
-      uniqueItems: true
+    example: 'sadfasdfdsdfasfd',
+    description: 'ProductID',
+    uniqueItems: true,
   })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty({
-      example: 'Shopping Cart',
-      description: 'Product Title',
-      uniqueItems: true
+    example: 'Shopping Cart',
+    description: 'Product Title',
+    uniqueItems: true,
   })
   @Column('text', {
     unique: true,
@@ -31,8 +31,8 @@ export class Product {
   title: string;
 
   @ApiProperty({
-      example: 19.99,
-      description: 'Product Price'
+    example: 19.99,
+    description: 'Product Price',
   })
   @Column('float', {
     default: 0,
@@ -40,8 +40,8 @@ export class Product {
   price: number;
 
   @ApiProperty({
-      example: 'A comfortable shopping cart for your daily needs.',
-      description: 'Product Description'
+    example: 'A comfortable shopping cart for your daily needs.',
+    description: 'Product Description',
   })
   @Column({
     type: 'text',
@@ -50,9 +50,9 @@ export class Product {
   description: string;
 
   @ApiProperty({
-      example: 'shopping-cart',
-      description: 'Product Slug',
-      uniqueItems: true
+    example: 'shopping-cart',
+    description: 'Product Slug',
+    uniqueItems: true,
   })
   @Column('text', {
     unique: true,
@@ -60,8 +60,8 @@ export class Product {
   slug: string;
 
   @ApiProperty({
-      example: 10,
-      description: 'Product Stock'
+    example: 10,
+    description: 'Product Stock',
   })
   @Column('int', {
     default: 0,
@@ -69,8 +69,8 @@ export class Product {
   stock: number;
 
   @ApiProperty({
-      example: ['S', 'M', 'L'],
-      description: 'Product Sizes'
+    example: ['S', 'M', 'L'],
+    description: 'Product Sizes',
   })
   @Column('text', {
     array: true,
@@ -79,15 +79,15 @@ export class Product {
   sizes: string[];
 
   @ApiProperty({
-      example: 'unisex',
-      description: 'Product Gender'
+    example: 'unisex',
+    description: 'Product Gender',
   })
   @Column('text')
   gender: string;
 
   @ApiProperty({
-      example: ['electronics', 'gadgets'],
-      description: 'Product Tags'
+    example: ['electronics', 'gadgets'],
+    description: 'Product Tags',
   })
   @Column('text', {
     array: true,
