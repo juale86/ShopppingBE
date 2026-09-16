@@ -2,7 +2,9 @@ import { Controller, Get } from '@nestjs/common';
 import { SeedService } from './seed.service';
 import { ValidRoles } from '../auth/interfaces';
 import { Auth } from '../auth/decorators';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Seed')
 @Controller('seed')
 @Auth(ValidRoles.admin)
 export class SeedController {
