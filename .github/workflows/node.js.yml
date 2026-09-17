@@ -28,3 +28,28 @@ jobs:
     - run: yarn test
     - run: yarn test:cov
     - run: yarn build
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Zip artifact
+      run: zip -r deploy-${{ github.sha }}.zip . -x "node_modules/*" -x "coverage/*"
+
+    - name: Upload to S3
+      run: aws s3 cp deploy-${{ github.sha }}.zip s3://elasticbeanstalk-us-east-1-991410969131/BadicShopping/deploy-${{ github.sha }}.zip
+
+    - name: Create application version
+      run: |
+        aws elasticbeanstalk create-application-version \
+          --application-name BadicShopping \
+          --version-label ${{ github.sha }} \
+          --source-bundle S3Bucket="elasticbeanstalk-us-east-1-991410969131",S3Key="BadicShopping/deploy-${{ github.sha }}.zip"
+    - name: Deploy new version
+      run: |
+        aws elasticbeanstalk update-environment \
+          --environment-name BadicShopping-env \
+          --version-label ${{ github.sha }}
