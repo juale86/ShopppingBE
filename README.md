@@ -78,6 +78,7 @@ Los clientes (web/mobile) llaman a la API REST bajo el prefijo global `/api` y, 
 | `yarn build` | Compila el proyecto |
 | `yarn lint` | Lint con autofix |
 | `yarn test` | Tests unitarios (Jest) |
+| `yarn test:cov` | Tests unitarios con reporte de cobertura |
 | `yarn test:e2e` | Tests end-to-end |
 
 ## Endpoints principales
@@ -87,6 +88,7 @@ Los clientes (web/mobile) llaman a la API REST bajo el prefijo global `/api` y, 
 | POST | `/api/auth/register` | — | Crea un usuario |
 | POST | `/api/auth/login` | — | Login, devuelve JWT |
 | GET | `/api/auth/check-status` | JWT | Revalida el token |
+| PATCH | `/api/auth/users/:id/role` | JWT (`super-user`) | Asciende/desciende a otro usuario a `admin` (no se puede cambiar el propio rol) |
 | GET | `/api/products` | — | Lista paginada de productos |
 | GET | `/api/products/:searchTerm` | — | Busca por id/slug/título |
 | POST | `/api/products` | JWT (`admin`) | Crea un producto |
@@ -94,5 +96,26 @@ Los clientes (web/mobile) llaman a la API REST bajo el prefijo global `/api` y, 
 | POST | `/api/files/upload` | — | Sube una imagen de producto |
 | GET | `/api/files/product/:imageName` | — | Sirve una imagen subida |
 | GET | `/api/seed` | JWT (`admin`) | Repuebla la base con datos de ejemplo |
+| GET | `/health` | — | Health check, fuera del prefijo `/api` (para balanceadores/infra) |
 
 El WebSocket (Socket.io) se conecta directamente a la raíz del servidor (mismo host/puerto), sin prefijo `/api`.
+
+## Documentación interactiva (Swagger)
+
+La API expone su documentación OpenAPI/Swagger en `/api` (vía `@nestjs/swagger`).
+
+## Novedades desde la última actualización del README
+
+_Cambios entre el commit `48b4a35` (2026-09-05) y `3c898f9` (2026-09-17)._
+
+- **Swagger**: documentación interactiva de la API disponible en `/api`.
+- **Health check**: nuevo endpoint `GET /health`, excluido del prefijo global `/api`.
+- **Gestión de roles**: un `super-user` ahora puede ascender/descender a otros usuarios a `admin` mediante `PATCH /api/auth/users/:id/role` (no puede cambiar su propio rol).
+- **Fix de seed**: las contraseñas de los usuarios de seed se hasheaban en texto plano; ahora se hashean correctamente con bcrypt.
+- **CI/CD**: pipeline de GitHub Actions con lint (no bloqueante), tests unitarios, tests con cobertura y build; cada push a `main` empaqueta y despliega automáticamente a AWS Elastic Beanstalk.
+- **Calidad de código**: se agregaron ESLint + Prettier, tests unitarios nuevos (`auth`, `products`, `health`) y se corrigieron errores de compilación de TypeScript.
+- **Dependencias e infraestructura**: actualización de librerías (`yarn.lock`), ajustes de configuración de Yarn/TypeScript para el build en AWS, y corrección del protocolo SSL.
+
+---
+
+_Última actualización de este README: **2026-09-17**, en base al commit `3c898f9` ("Excluyendo /health del prefijo api")._

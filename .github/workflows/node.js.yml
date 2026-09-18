@@ -3,6 +3,9 @@ name: Node.js CI
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
   pull_request:
     branches: [ "main" ]
 
@@ -17,19 +20,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
+
     - run: yarn install --frozen-lockfile
     - run: yarn lint
       continue-on-error: true
     - run: yarn test
     - run: yarn test:cov
     - run: yarn build
-    
+
+    - name: Check for code changes
+      id: check-changes
+      run: |
+        git diff --name-only HEAD^ HEAD > changed_files.txt
+        if grep -E -v '^(README\.md|docs/|\.github/)' changed_files.txt; then
+          echo "has_code_changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_code_changes=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Configure AWS credentials
+      if: steps.check-changes.outputs.has_code_changes == 'true'
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -37,18 +55,23 @@ jobs:
         aws-region: us-east-1
 
     - name: Zip artifact
+      if: steps.check-changes.outputs.has_code_changes == 'true'
       run: zip -r deploy-${{ github.sha }}.zip . -x "node_modules/*" -x "coverage/*" -x "test/*" -x ".github/*" -x "src/test/*" -x "src/**/*.spec.ts" -x "src/**/*.test.ts" -x "src/**/*.d.ts" -x "src/**/*.map" -x "src/**/*.js.map"
 
     - name: Upload to S3
+      if: steps.check-changes.outputs.has_code_changes == 'true'
       run: aws s3 cp deploy-${{ github.sha }}.zip s3://elasticbeanstalk-us-east-1-991410969131/BadicShopping/deploy-${{ github.sha }}.zip
 
     - name: Create application version
+      if: steps.check-changes.outputs.has_code_changes == 'true'
       run: |
         aws elasticbeanstalk create-application-version \
           --application-name BadicShopping \
           --version-label ${{ github.sha }} \
           --source-bundle S3Bucket="elasticbeanstalk-us-east-1-991410969131",S3Key="BadicShopping/deploy-${{ github.sha }}.zip"
+
     - name: Deploy new version
+      if: steps.check-changes.outputs.has_code_changes == 'true'
       run: |
         aws elasticbeanstalk update-environment \
           --environment-name BadicShopping-env \
