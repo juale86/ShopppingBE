@@ -48,7 +48,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  @Auth()
+  @Auth(ValidRoles.admin)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
@@ -58,10 +58,8 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  @Auth()
+  @Auth(ValidRoles.admin)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.productsService.remove(id);
-
-    // return this.productsService.remove(id);
   }
 }
